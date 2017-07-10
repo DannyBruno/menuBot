@@ -11,11 +11,50 @@ app = Flask(__name__)
 
 db = redis.from_url(os.environ.get("REDIS_URL"))
 
+'''
+headers = {
+	"Content-Type": "application/json"
+}
+'''
+
+#initialize get started button and greeting text
+greetingsPayload = {
+  "setting_type":"greeting",
+  "greeting":{
+    "text":"University of Michigan Dining hall menus straight to your phone, every morning."
+  }
+}
+try:
+	greetingResponse = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile?access_token=EAAB6sqmI7uwBAOk4EZBGAgB67ZA40ziA7T5r82TUiXZAFnacYHcuK5KRFsVHy7le7SrUzmCfJQVamZBArsAzTcdGSeUzrUNPTh8V3PeIuVfKto2f43eqK4aj2Mk72J95e1HKj9SHVerm3ZAG20dT9SPAGO8b3u6ZCoZBv8tcuQHmhvyYH0EqiH6", data = json.dumps(greetingsPayload))
+	if (greetingResponse.json() != requests.codes.ok):
+		raise ConnectionError("greeting set failed")
+except ConnectionError as err:
+	print(err.args) 
+
+
+getStartedPayload = { 
+  "get_started":{
+    "payload":"GET_STARTED_PAYLOAD"
+  }
+}
+try:
+	getStartedResponse = requests.post("https://graph.facebook.com/v2.6/me/messenger_profile?access_token=EAAB6sqmI7uwBAOk4EZBGAgB67ZA40ziA7T5r82TUiXZAFnacYHcuK5KRFsVHy7le7SrUzmCfJQVamZBArsAzTcdGSeUzrUNPTh8V3PeIuVfKto2f43eqK4aj2Mk72J95e1HKj9SHVerm3ZAG20dT9SPAGO8b3u6ZCoZBv8tcuQHmhvyYH0EqiH6", data = json.dumps(getStartedPayload)) 
+	if (getStartedResponse.status_code != requests.codes.ok):
+		raise ConnectionError("get started set failed")
+except ConnectionError as err:
+	print(err.args) 
+
+
+
+
 
 #frontend
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
+
+
+
 
 #verify
 @app.route('/webhook', methods=['GET'])
@@ -24,6 +63,9 @@ def verify():
 		if not request.args["hub.verify_token"] == 'verifyMe':
 			return "Verification token incorrect", 403
 		return request.args["hub.challenge"], 200
+
+
+
 
 
 #message logic
