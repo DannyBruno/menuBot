@@ -145,7 +145,7 @@ def webhook():
 	#print(request)
 	messageObject = json.loads(request.data)
 	print(messageObject)
-	print (messageObject['entry']['id'])
+	print (messageObject['entry'][0]['messaging'][0]['message'])
 
 	#message parse logic
 	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
