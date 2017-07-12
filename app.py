@@ -142,8 +142,8 @@ def verify():
 #message logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
-
-	messageObject = request.get_json()
+	print(request)
+	messageObject = json.loads(request.data)
 	print(messageObject)
 
 	#message parse logic
