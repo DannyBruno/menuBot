@@ -142,13 +142,14 @@ def verify():
 #message logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
-	print(request)
+	#print(request)
 	messageObject = json.loads(request.data)
 	print(messageObject)
+	print (messageObject['entry']['id'])
 
 	#message parse logic
-	if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
-		db.set(messageObject["entry"]["messaging"]["sender"]["id"], 0)
+	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
+	#	db.set(messageObject["entry"]["messaging"]["sender"]["id"], 0)
 
 
 
