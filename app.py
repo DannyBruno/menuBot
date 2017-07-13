@@ -159,13 +159,13 @@ def webhook():
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 
 
+	print(messageObject)
 	if 'postback' in messageObject['entry'][0]['messaging'][0]:	#get started was triggered
 		sendMessage(senderID,"Welcome to menuBot!")
 
 
 
-	#print(messageObject)
-	#print (messageObject['entry'][0]['messaging'][0])
+	#print (messageObject['entry'][0]['messaging'][0]['message'])
 
 	#message parse logic
 	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
@@ -180,6 +180,7 @@ def webhook():
 #at a time of day cache the menus, APScheduler
 
 
+	return "ok", 200
 
 
 #logs messages
