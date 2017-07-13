@@ -163,7 +163,7 @@ def webhook():
 	if 'postback' in body:	#get started was triggered
 		sendMessage(senderID,"Hi {{user first name}}! Welcome to menuBot! Would you like to subscribe to the service? (Yes,No)")
 		db.set(senderID, 0)
-	elif 'message' in body:
+	else:
 		value = db.get(senderID)
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 			db.set(senderID, 10)
