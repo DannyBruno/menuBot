@@ -9,6 +9,8 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+pageAccessToken = 'EAAB6sqmI7uwBAOk4EZBGAgB67ZA40ziA7T5r82TUiXZAFnacYHcuK5KRFsVHy7le7SrUzmCfJQVamZBArsAzTcdGSeUzrUNPTh8V3PeIuVfKto2f43eqK4aj2Mk72J95e1HKj9SHVerm3ZAG20dT9SPAGO8b3u6ZCoZBv8tcuQHmhvyYH0EqiH6'
+
 
 #url = os.environ.get("REDIS_URL")
 #print(url)
@@ -112,7 +114,7 @@ except ConnectionError as err:
 	print(err) 
 
 
-getStarted = requests.get("https://graph.facebook.com/v2.6/me/messenger_profile?fields=get_started&access_token=EAAB6sqmI7uwBAOk4EZBGAgB67ZA40ziA7T5r82TUiXZAFnacYHcuK5KRFsVHy7le7SrUzmCfJQVamZBArsAzTcdGSeUzrUNPTh8V3PeIuVfKto2f43eqK4aj2Mk72J95e1HKj9SHVerm3ZAG20dT9SPAGO8b3u6ZCoZBv8tcuQHmhvyYH0EqiH6")
+getStarted = requests.get("https://graph.facebook.com/v2.6/me/messenger_profile?fields=get_started&access_token=" + pageAccessToken)
 print (getStarted.json())
 
 
@@ -124,6 +126,16 @@ print (getStarted.json())
 def hello_world():
     return 'Hello, World!'
 
+def sendMessage(senderID, message):
+	payload = {
+  		"recipient":{
+  			"id":senderID
+  		},
+  		"message":{
+  			"text":message
+  		}
+	}
+	requests.post('https://graph.facebook.com/v2.6/me/messages?access_token=' + pageAccessToken, headers=headers, data=payload)
 
 
 
@@ -144,8 +156,16 @@ def verify():
 def webhook():
 	#print(request)
 	messageObject = json.loads(request.data)
+	senderID = data['entry'][0]['messaging'][0]['sender']['id']
+
+
+	if 'postback' in messageObject['entry'][0]['messaging'][0]:	#get started was triggered
+		sendMessage(senderID,"Welcome to menuBot!")
+
+
+
 	print(messageObject)
-	print (messageObject['entry'][0]['messaging'][0]['message'])
+	print (messageObject['entry'][0]['messaging'][0])
 
 	#message parse logic
 	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
