@@ -156,7 +156,7 @@ def verify():
 def webhook():
 	#print(request)
 	messageObject = json.loads(request.data)
-	senderID = data['entry'][0]['messaging'][0]['sender']['id']
+	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 
 
 	if 'postback' in messageObject['entry'][0]['messaging'][0]:	#get started was triggered
