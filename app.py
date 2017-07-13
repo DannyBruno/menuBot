@@ -135,7 +135,7 @@ def sendMessage(senderID, message):
   			"text":message
   		}
 	}
-	requests.post('https://graph.facebook.com/v2.6/me/messages?access_token=' + pageAccessToken, headers=headers, data=payload)
+	requests.post('https://graph.facebook.com/v2.6/me/messages?access_token=' + pageAccessToken, headers=headers, data=json.dumps(payload))
 
 
 
@@ -164,8 +164,8 @@ def webhook():
 
 
 
-	print(messageObject)
-	print (messageObject['entry'][0]['messaging'][0])
+	#print(messageObject)
+	#print (messageObject['entry'][0]['messaging'][0])
 
 	#message parse logic
 	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
