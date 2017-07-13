@@ -158,6 +158,8 @@ def webhook():
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	body = messageObject['entry'][0]['messaging'][0]
+	print("HELLO!")
+
 
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
