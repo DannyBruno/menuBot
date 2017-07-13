@@ -132,7 +132,7 @@ def sendMessage(senderID, message):
   			"id":senderID
   		},
   		"message":{
-  			"text":message
+  			"text": message
   		}
 	}
 	requests.post('https://graph.facebook.com/v2.6/me/messages?access_token=' + pageAccessToken, headers=headers, data=json.dumps(payload))
@@ -157,20 +157,21 @@ def webhook():
 	#print(request)
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
-
+	body = messageObject['entry'][0]['messaging'][0]
 
 	print(messageObject)
-	if 'postback' in messageObject['entry'][0]['messaging'][0]:	#get started was triggered
-		sendMessage(senderID,"Welcome to menuBot!")
-
-
-
-	#print (messageObject['entry'][0]['messaging'][0]['message'])
-
-	#message parse logic
-	#if not db.exists(messageObject["entry"]["messaging"]["sender"]["id"]):
-	#	db.set(messageObject["entry"]["messaging"]["sender"]["id"], 0)
-
+	if 'postback' in body:	#get started was triggered
+		sendMessage(senderID,"Hi {{user first name}}! Welcome to menuBot! Would you like to subscribe to the service? (Yes,No)")
+		db.set(senderID, 0)
+	elif 'message' in body:
+		value = db.get(senderID)
+		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
+			db.set(senderID, 10)
+			sendMessage(senderID, "Awesome! You're good to go!")
+		elif value == 0 and body['message']['text'].lower() != 'yes':
+			senderID(senderID, "No worries! Message back at anytime to be reprompted!")
+		else:
+			sendMessage(senderID, "Sorry! I'm not sure what you mean!")
 
 
 #periodic message send, uses database APScheduler
@@ -183,10 +184,6 @@ def webhook():
 	return "ok", 200
 
 
-#logs messages
-def log(message):
-	print (str(message))
-	sys.stdout.flush()
 
 
 if __name__ == '__main__':
