@@ -158,12 +158,11 @@ def webhook():
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	body = messageObject['entry'][0]['messaging'][0]
-	print("HELLO!")
 
 
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
-		print("HELLO!")
+		#print("HELLO!")
 		sendMessage(senderID,"Hi {{user first name}}! Welcome to menuBot! Would you like to subscribe to the service? (Yes,No)")
 		db.set(senderID, 0)
 	else:
