@@ -1,4 +1,4 @@
-import os
+simport os
 import redis
 import sys
 import json
@@ -159,7 +159,7 @@ def webhook():
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	body = messageObject['entry'][0]['messaging'][0]
 
-	userInfo = request.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name,timezone&access_token=" + pageAccessToken)
+	userInfo = requests.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name,timezone&access_token=" + pageAccessToken)
 
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
