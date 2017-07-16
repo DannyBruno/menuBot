@@ -1,4 +1,4 @@
-simport os
+import os
 import redis
 import sys
 import json
