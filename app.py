@@ -159,9 +159,8 @@ def webhook():
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	body = messageObject['entry'][0]['messaging'][0]
 
-	userInfo = requests.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name,timezone&access_token=" + pageAccessToken)
-	print(userInfo)
-	
+	userInfo = requests.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + pageAccessToken)
+	print("Return from graph request" + userInfo)
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
 		#print("HELLO!")
