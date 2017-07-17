@@ -157,6 +157,7 @@ def webhook():
 	#print(request)
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
+	print(senderID)
 	body = messageObject['entry'][0]['messaging'][0]
 
 	userInfo = requests.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" + pageAccessToken)
