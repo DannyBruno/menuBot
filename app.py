@@ -178,12 +178,14 @@ def webhook():
 		elif value == 0 and body['message']['text'].lower() != 'yes':
 			senderID(senderID, "No worries! Message back at anytime to be reprompted!")
 		elif value == -1:
+			'''
 			#attempt to parse
 			if (attemptToParseFails):
 				sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
 				sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
-			else:
+			#else:
 				#set value in db
+			'''
 		elif value != 0:
 			sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
 		else:
@@ -196,11 +198,11 @@ def webhook():
 
 
 #define send parse function
-def parseInputAndSendMessage():
+#def parseInputAndSendMessage():
 	
 
 #at a time of day cache the menus, APScheduler
-def getMenusAndStore():
+#def getMenusAndStore():
 
 
 
