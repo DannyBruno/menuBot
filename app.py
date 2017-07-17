@@ -160,7 +160,7 @@ def webhook():
 	print(senderID)
 	body = messageObject['entry'][0]['messaging'][0]
 
-	userInfo = requests.get("https://graph.facebook.com/v2.6/<" + senderID + ">?fields=first_name,last_name&access_token=" + pageAccessToken)
+	userInfo = requests.get("https://graph.facebook.com/v2.6/" + senderID + "?fields=first_name,last_name&access_token=" + pageAccessToken)
 	print(userInfo.json())
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
@@ -170,22 +170,37 @@ def webhook():
 	else:
 		value = db.get(senderID)
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
-			db.set(senderID, 10)
-			sendMessage(senderID, "Awesome! You're good to go!")
+			sendMessage(senderID, "Awesome! Now select which dining halls you'd like to subscibe to!")
+			sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
+			sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
+			sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
+			db.set(senderID,-1)
 		elif value == 0 and body['message']['text'].lower() != 'yes':
 			senderID(senderID, "No worries! Message back at anytime to be reprompted!")
+		elif value == -1:
+			#attempt to parse
+			if (attemptToParseFails):
+				sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
+				sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
+			else:
+				#set value in db
+		elif value != 0:
+			sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
 		else:
 			sendMessage(senderID, "Sorry! I'm not sure what you mean!")
 
 
+	return "ok", 200
+
 #periodic message send, uses database APScheduler
 
 
+#define send parse function
+def parseInputAndSendMessage():
+	
 
 #at a time of day cache the menus, APScheduler
-
-
-	return "ok", 200
+def getMenusAndStore():
 
 
 
