@@ -199,6 +199,7 @@ def webhook():
 		elif value == -1:
 
 			input = csv.reader([body['message']['text']])
+			print("Passing in input..")
 			if (invalidInput(input)):
 				sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
 			else:
