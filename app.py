@@ -189,6 +189,7 @@ def webhook():
 		value = db.get(senderID)
 		print("Value is .." + str(value))
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
+			print("They said yes!")
 			time.sleep(1)
 			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
 			time.sleep(1)
@@ -199,6 +200,7 @@ def webhook():
 			db.set(senderID,-1)
 			print("set sender id to 1.. " + str(db.get(senderID)))
 		elif value == 0 and body['message']['text'].lower() != 'yes':
+			print("They didn't say yes!")
 			senderID(senderID, "You were not subscribed to the service. Message back at anytime to be reprompted!")
 		elif value == -1:
 
