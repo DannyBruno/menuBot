@@ -191,7 +191,7 @@ def webhook():
 			elif value != 0:
 				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
 			else:
-			sendMessage(senderID, "Sorry! I'm not sure what you mean!")
+				sendMessage(senderID, "Sorry! I'm not sure what you mean!")
 
 
 	return "ok", 200
