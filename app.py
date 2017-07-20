@@ -202,6 +202,7 @@ def webhook():
 			elif value == 0 and body['message']['text'].lower() != 'yes':
 				print("They didn't say yes!")
 				senderID(senderID, "You were not subscribed to the service. Message back at anytime to be reprompted!")
+			'''
 			elif value == -1:
 
 				input = csv.reader([body['message']['text']])
@@ -224,9 +225,10 @@ def webhook():
 			elif value != 0:
 				#if (body['message']['text'].lower() == "change selection"):
 				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
+				'''
 			else:
 				sendMessage(senderID, "Sorry! I'm not sure what you mean!")
-
+				
 		print("webhook response complete..")
 		return "ok", 200
 	except (RuntimeError, TypeError, NameError):
