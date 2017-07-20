@@ -226,9 +226,7 @@ def webhook():
 				#if (body['message']['text'].lower() == "change selection"):
 				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
 				'''
-			else:
-				sendMessage(senderID, "Sorry! I'm not sure what you mean!")
-				
+
 		print("webhook response complete..")
 		return "ok", 200
 	except (RuntimeError, TypeError, NameError):
