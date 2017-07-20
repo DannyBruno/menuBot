@@ -3,7 +3,6 @@ import redis
 import sys
 import json
 import csv
-import time
 
 import requests
 from flask import Flask, request
@@ -191,9 +190,9 @@ def webhook():
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 			print("They said yes!")
 			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
-			time.sleep(1)
+			#time.sleep(1)
 			sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
-			time.sleep(1)
+			#time.sleep(1)
 			sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
 			sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
 			db.set(senderID,-1)
