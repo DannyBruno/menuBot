@@ -170,6 +170,7 @@ def invalidInput(input):
 @app.route('/webhook', methods=['POST'])
 def webhook():
 	try:
+		return 200
 		#print(request)
 		messageObject = json.loads(request.data)
 		senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
