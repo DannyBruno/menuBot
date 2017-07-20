@@ -169,27 +169,28 @@ def webhook():
 		sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome to menuBot! Would you like to subscribe to the service? \n(YES, NO)")
 		db.set(senderID, 0)
 	else:
-		value = db.get(senderID)
-		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
-			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
-			sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
-			sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
-			sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
-			db.set(senderID,-1)
-		elif value == 0 and body['message']['text'].lower() != 'yes':
-			senderID(senderID, "No worries! Message back at anytime to be reprompted!")
-		elif value == -1:
-			'''
-			#attempt to parse
-			if (attemptToParseFails):
-				sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
-				sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
-			#else:
-				#set value in db
-			'''
-		elif value != 0:
-			sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
-		else:
+		if db.exists(senderID):
+			value = db.get(senderID)
+			if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
+				sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
+				sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
+				sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
+				sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
+				db.set(senderID,-1)
+			elif value == 0 and body['message']['text'].lower() != 'yes':
+				senderID(senderID, "No worries! Message back at anytime to be reprompted!")
+			elif value == -1:
+				'''
+				#attempt to parse
+				if (attemptToParseFails):
+					sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
+					sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
+				#else:
+					#set value in db
+				'''
+			elif value != 0:
+				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
+			else:
 			sendMessage(senderID, "Sorry! I'm not sure what you mean!")
 
 

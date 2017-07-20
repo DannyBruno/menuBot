@@ -187,7 +187,7 @@ def webhook():
 			db.set(senderID, 0)
 			print("set sender in db to.." + str(db.get(senderID)))
 		else:
-			value = db.get(senderID)
+			#value = db.get(senderID)
 			print("Value is .." + str(value))
 			if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 				print("They said yes!")
