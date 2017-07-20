@@ -153,8 +153,8 @@ def verify():
 
 
 def invalidInput(input):
-	print(input)
-	for value in input:
+	print(next(input))
+	for value in next(input):
 		if (not int(value) <= 7) or (not int(value) > 0):
 			sendMessage(senderID, "Sorry! Make sure you input your selection contains only valid numbers (1-7).")
 			return false
@@ -190,7 +190,6 @@ def webhook():
 		print("Value is .." + str(value))
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 			print("They said yes!")
-			time.sleep(1)
 			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
 			time.sleep(1)
 			sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
