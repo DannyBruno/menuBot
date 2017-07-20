@@ -183,8 +183,10 @@ def webhook():
 		#print("HELLO!")
 		sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome to menuBot! Would you like to subscribe to the service? \nReply with \"Yes\" or \"No\"")
 		db.set(senderID, 0)
+		print("set sender in db to.." + str(db.get(senderID)))
 	else:
 		value = db.get(senderID)
+		print("Value is .." + str(value))
 		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 			sleep(1)
 			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
@@ -194,6 +196,7 @@ def webhook():
 			sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
 			sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
 			db.set(senderID,-1)
+			print("set sender id to 1.. " + str(db.get(senderID)))
 		elif value == 0 and body['message']['text'].lower() != 'yes':
 			senderID(senderID, "You were not subscribed to the service. Message back at anytime to be reprompted!")
 		elif value == -1:
