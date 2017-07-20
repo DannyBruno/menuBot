@@ -180,7 +180,7 @@ def webhook():
 	print(userInfo)
 	print(messageObject)
 	if 'postback' in body:	#get started was triggered
-		#print("HELLO!")
+		print(db.exists(senderID))
 		sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome to menuBot! Would you like to subscribe to the service? \nReply with \"Yes\" or \"No\"")
 		db.set(senderID, 0)
 		print("set sender in db to.." + str(db.get(senderID)))
