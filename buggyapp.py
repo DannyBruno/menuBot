@@ -2,6 +2,7 @@ import os
 import redis
 import sys
 import json
+import csv
 
 import requests
 from flask import Flask, request
@@ -150,56 +151,90 @@ def verify():
 
 
 
+def invalidInput(input):
+	print(next(input))
+	for value in next(input):
+		if (not int(value) <= 7) or (not int(value) > 0):
+			sendMessage(senderID, "Sorry! Make sure you input your selection contains only valid numbers (1-7).")
+			return false
+		elif value.isalpha():
+			sendMessage(senderID, "A valid selection cannot contain letters! Make sure you input your selection contains only valid numbers (1-7).")
+			return false
+		else:
+			return true
+
+
+
 
 #message logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
-	#print(request)
-	messageObject = json.loads(request.data)
-	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
-	print(senderID)
-	body = messageObject['entry'][0]['messaging'][0]
+	try:
+		return 200
+		#print(request)
+		messageObject = json.loads(request.data)
+		senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
+		print(senderID)
+		body = messageObject['entry'][0]['messaging'][0]
 
-	userInfo = requests.get("https://graph.facebook.com/v2.6/" + senderID + "?fields=first_name,last_name&access_token=" + pageAccessToken)
-	userInfo = userInfo.json()
-	print(userInfo)
-	print(messageObject)
-	if 'postback' in body:	#get started was triggered
-		#print("HELLO!")
-		sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome to menuBot! Would you like to subscribe to the service? \n(YES, NO)")
-		db.set(senderID, 0)
-	else:
-		value = db.get(senderID)
-		if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
-			sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
-			sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
-			sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
-			sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
-			db.set(senderID,-1)
-		elif value == 0 and body['message']['text'].lower() != 'yes':
-			senderID(senderID, "No worries! Message back at anytime to be reprompted!")
-		elif value == -1:
-			'''
-			#attempt to parse
-			if (attemptToParseFails):
-				sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
-				sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
-			#else:
-				#set value in db
-			'''
-		elif value != 0:
-			sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
+		userInfo = requests.get("https://graph.facebook.com/v2.6/" + senderID + "?fields=first_name,last_name&access_token=" + pageAccessToken)
+		userInfo = userInfo.json()
+		print(userInfo)
+		print(messageObject)
+		if 'postback' in body:	#get started was triggered
+			print(db.exists(senderID))
+			sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome to menuBot! Would you like to subscribe to the service? \nReply with \"Yes\" or \"No\"")
+			db.set(senderID, 0)
+			print("set sender in db to.." + str(db.get(senderID)))
 		else:
-			sendMessage(senderID, "Sorry! I'm not sure what you mean!")
+			value = db.get(senderID)
+			print("Value is .." + str(value))
+			if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
+				print("They said yes!")
+				sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
+				#time.sleep(1)
+				sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
+				#time.sleep(1)
+				sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
+				sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
+				db.set(senderID,-1)
+				print("set sender id to 1.. " + str(db.get(senderID)))
+			elif value == 0 and body['message']['text'].lower() != 'yes':
+				print("They didn't say yes!")
+				senderID(senderID, "You were not subscribed to the service. Message back at anytime to be reprompted!")
+			'''
+			elif value == -1:
+
+				input = csv.reader([body['message']['text']])
+				print("Passing in input..")
+				if (invalidInput(input)):
+					sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
+				else:
+
+					total = 0
+					placeholder = 1
+					#length = len(input)
+					for value in input:
+						value = int(value)
+						total += placeholder*value
+						placeholder *=10
+					db.set(senderID, total)
+			
+					sendMessage(senderID, "Congradulations you've been subscribed to " + str(total))
+				
+			elif value != 0:
+				#if (body['message']['text'].lower() == "change selection"):
+				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
+				'''
+
+		print("webhook response complete..")
+		return "ok", 200
+	except (RuntimeError, TypeError, NameError):
+		print("There has been an error..")
+		return 200
 
 
-	return "ok", 200
 
-#periodic message send, uses database APScheduler
-
-
-#define send parse function
-#def parseInputAndSendMessage():
 	
 
 #at a time of day cache the menus, APScheduler
