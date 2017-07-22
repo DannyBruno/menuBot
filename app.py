@@ -215,7 +215,9 @@ def webhook():
 				attempt = attemptToParse(body['message']['text'])
 				if (attempt[0]):
 					choice = buildValue(attempt[1])
-					db.set(senderID, choice)
+					db.set(senderID, choice) #send confirmation message
+					sendMessage(senderID, "You have been subscribed!")
+					sendMessage(senderID, choice)
 				else:
 					sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
 					sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
