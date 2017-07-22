@@ -148,6 +148,38 @@ def verify():
 		return request.args["hub.challenge"], 200
 
 
+def attemptToParse(inputString):
+	inputString = inputString.replace(" ", "")
+	choiceList = inputString.split(",")
+	for value in choiceList:
+		if not len(value) == 1:
+			print("Each length was not one")
+			return (False, choiceList)
+		elif not value.isdigit():
+			print("each value is not a digit")
+			return (False, choiceList)
+		elif not (int(value) > 0 and int(value) < 7):
+			print("not greater than 0 and not less than 7")
+			return (False, choiceList)
+	return (True, choiceList)
+
+def buildValue(inputList):
+	index = 1
+	total = 0
+	for value in inputList:
+		total += index*int(value)
+		index *= 10
+	return total
+
+def decipherChoice(value):
+	myList = []
+	while (value > 0):
+		next = value%10
+		print(next)
+		myList.append(value%10)
+		value = value//10
+		print(value)
+	return myList
 
 
 
@@ -180,14 +212,13 @@ def webhook():
 			elif value == 0 and body['message']['text'].lower() != 'yes':
 				senderID(senderID, "No worries! Message back at anytime to be reprompted!")
 			elif value == -1:
-				'''
-				#attempt to parse
-				if (attemptToParseFails):
+				attempt = attemptToParse(body['message']['text'])
+				if (attempt[0]):
+					choice = buildValue(attempt[1])
+					db.set(senderID, choice)
+				else:
 					sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
 					sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
-				#else:
-					#set value in db
-				'''
 			elif value != 0:
 				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
 			else:
