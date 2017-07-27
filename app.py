@@ -117,9 +117,14 @@ except ConnectionError as err:
 getStarted = requests.get("https://graph.facebook.com/v2.6/me/messenger_profile?fields=get_started&access_token=" + pageAccessToken)
 print (getStarted.json())
 
+###
+'''
+db.set("Dan", ["1","2","3"]);
+print(db.hget("Dan"));
+'''
+###
 
-
-
+diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 #frontend
 @app.route('/')
@@ -181,7 +186,7 @@ def decipherChoice(value):
 		print(value)
 	return myList
 
-
+diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 #message logic
 @app.route('/webhook', methods=['POST'])
@@ -216,15 +221,38 @@ def webhook():
 				if (attempt[0]):
 					choice = buildValue(attempt[1])
 					db.set(senderID, choice) #send confirmation message
-					sendMessage(senderID, "You have been subscribed!")
-					sendMessage(senderID, choice)
+					decipheredChoice = decipherChoice(choice)
+
+					choiceString = "You have been subscribed to "
+					for key in range(0,len(decipheredChoice)-1):
+						choiceString  = choiceString + diningHallList[decipheredChoice[key]-1] + ", "
+
+					choiceString = choiceString + "and " + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
+
+					sendMessage(senderID, choiceString)
+					sendMessage(senderID, "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 				else:
 					sendMessage(senderID, "Sorry! I'm not sure what you mean. Make sure you input your selection correctly.")
 					sendMessage(senderID, "Remember, to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order but seperated by commas)")
 			elif value != 0:
-				sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service. (Visit menuBot.com for more advanced usage documentation)")
+				#if not "unsuscribe" or "edit" print informational message, otherwise unsub or allow them to alter stored value in db
+				if body['message']['text'].lower() == 'unsubscribe':
+					sendMessage(senderID, "You've been unsubscribed! Message back at any time to be repromted!")
+					db.delete(senderID)
+				elif body['message']['text'].lower() == 'edit':
+					sendMessage(senderID,"You're previous selection is ready to be overwritten! Make your selection: ")
+					sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
+					sendMessage(senderID, "Submit your response in format <Dining hall choice 1>, <Dining hall choice 2>, <Dining hall choice 3>")
+					sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
+					db.set(senderID,-1)
+				else:
+					sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service or \"edit\" if you'd like to edit your selection of dining halls. (Visit menuBot.com for more advanced usage documentation)")
 			else:
 				sendMessage(senderID, "Sorry! I'm not sure what you mean!")
+		else:
+			##people trying to resub
+			sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome back to menuBot! Would you like to subscribe to the service? \n(YES, NO)")
+			db.set(senderID, 0)
 
 
 	return "ok", 200
