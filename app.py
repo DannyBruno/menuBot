@@ -166,6 +166,7 @@ def attemptToParse(inputString):
 		elif not (int(value) > 0 and int(value) < 7):
 			print("not greater than 0 and not less than 7")
 			return (False, choiceList)
+	choiceList = set(choiceList)
 	return (True, choiceList)
 
 def buildValue(inputList):
