@@ -2,6 +2,7 @@ import os
 import redis
 import sys
 import json
+import datetime
 
 import requests
 from flask import Flask, request
@@ -127,11 +128,9 @@ print(db.hget("Dan"));
 
 
 
-scheduler = BackgroundScheduler({ ####check
-	#add config info
-	'apscheduler.timezone': 'EST'
-	})
+scheduler = BackgroundScheduler()
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
+datetime.datetime.now().time()
 
 #frontend
 @app.route('/')
@@ -278,9 +277,18 @@ def pullMenus():
 	for hall in diningHallList:
 		urlRequestString = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=' + hall + '%20DINING%20HALL&output=json&date=today'
 		response = requests.get(urlRequestString)
+		print(diningHallMenuDict)
 		#diningHallMenuDict[hall] = json.loads(response.content)[?][?][]
 
-scheduler.add_job(pullMenus, 'cron', hour='3', minute='30')
+scheduler.add_job(pullMenus, 'cron', hour=18, minute=4, second=00)
+
+def displayTime():
+	print(datetime.datetime.now().time())
+
+scheduler.add_job(displayTime, 'interval', seconds=1)
+
+#print(diningHallMenuDict)
+scheduler.start()
 
 
 
