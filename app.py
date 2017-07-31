@@ -280,12 +280,12 @@ def pullMenus():
 		print(diningHallMenuDict)
 		#diningHallMenuDict[hall] = json.loads(response.content)[?][?][]
 
-scheduler.add_job(pullMenus, 'cron', hour=22, minute=6, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', hour=22, minute=8, second=00) #+4 hours ahead to deploy
 
 def displayTime():
 	print(datetime.datetime.now().time())
 
-scheduler.add_job(displayTime, 'interval', seconds=1)
+#scheduler.add_job(displayTime, 'interval', seconds=1)
 
 #print(diningHallMenuDict)
 scheduler.start()
