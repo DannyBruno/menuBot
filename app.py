@@ -273,13 +273,14 @@ def webhook():
 #5:30 AM Eastern
 
 diningHallMenuDict = {}
-scheduler.addjob(pullMenus, 'cron', hour='3', minute='30')
 
 def pullMenus():
 	for hall in diningHallList:
 		urlRequestString = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=' + hall + '%20DINING%20HALL&output=json&date=today'
 		response = requests.get(urlRequestString)
 		#diningHallMenuDict[hall] = json.loads(response.content)[?][?][]
+
+scheduler.add_job(pullMenus, 'cron', hour='3', minute='30')
 
 
 
