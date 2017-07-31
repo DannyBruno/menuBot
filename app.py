@@ -5,6 +5,7 @@ import json
 
 import requests
 from flask import Flask, request
+from apscheduler.schedulers.background import BackgroundScheduler
 #APScheduler
 
 app = Flask(__name__)
@@ -124,6 +125,12 @@ print(db.hget("Dan"));
 '''
 ###
 
+
+
+scheduler = BackgroundScheduler({ ####check
+	#add config info
+	'apscheduler.timezone': 'EST'
+	})
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 #frontend
@@ -247,9 +254,7 @@ def webhook():
 					sendMessage(senderID, "So, for example- to select South Quad, Mojo, and East Quad respond with \"6, 4, 2\" (in any order)")
 					db.set(senderID,-1)
 				else:
-					sendMessage(senderID, "I'm not sure what you mean! Type \"UNSUBSCRIBE\" at any time to unsubscribe from the service or \"edit\" if you'd like to edit your selection of dining halls. (Visit menuBot.com for more advanced usage documentation)")
-			else:
-				sendMessage(senderID, "Sorry! I'm not sure what you mean!")
+					sendMessage(senderID, "I'm not sure what you mean! Type \"unsubscribe\" at any time to unsubscribe from the service or \"edit\" if you'd like to edit your selection of dining halls. (Visit menuBot.com for more advanced usage documentation)")
 		else:
 			##people trying to resub
 			sendMessage(senderID,"Hi " + userInfo["first_name"] + "! Welcome back to menuBot! Would you like to subscribe to the service? \n(YES, NO)")
@@ -260,13 +265,21 @@ def webhook():
 
 #periodic message send, uses database APScheduler
 
-
-#define send parse function
-#def parseInputAndSendMessage():
 	
 
 #at a time of day cache the menus, APScheduler
-#def getMenusAndStore():
+#http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=BURSLEY%20DINING%20HALL&output=json&date=today
+#response = requests.get('http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=BURSLEY%20DINING%20HALL&output=json&date=today')
+#5:30 AM Eastern
+
+diningHallMenuDict = {}
+scheduler.addjob(pullMenus, 'cron', hour='3', minute='30')
+
+def pullMenus():
+	for hall in diningHallList:
+		urlRequestString = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=' + hall + '%20DINING%20HALL&output=json&date=today'
+		response = requests.get(urlRequestString)
+		#diningHallMenuDict[hall] = json.loads(response.content)[?][?][]
 
 
 
