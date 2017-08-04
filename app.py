@@ -294,8 +294,10 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 							mealString = mealString.rstrip()
 							mealString = mealString + " - "
 							for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait']:
-								#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait])
-								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
+								if (responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] == 'glutenfree'):
+									mealString = mealString + 'gluten free, '
+								else:
+									mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
 							mealString = mealString.rstrip(", ")
 						mealString = mealString + "\n"
 				else:
@@ -305,7 +307,9 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 						mealString = mealString.rstrip()
 						mealString = mealString + " - "
 						for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait']:
-								#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait])
+							if (responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'] == 'glutenfree'):
+								mealString = mealString + 'gluten free, '
+							else:	
 								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait] + ", "
 						mealString = mealString.rstrip(", ")
 					mealString = mealString + "\n"
@@ -331,7 +335,7 @@ def pullMenus(diningHallMenuDict, diningHallList):
 		else:
 			requestURL = requestURL + diningHallList[entry].replace(" ", "%20") + '%20DINING%20HALL&output=json&date=today'
 		cacheDiningHall(json.loads(requests.get(requestURL).content), entry, diningHallMenuDict)
-	for entry in diningHallMenuDict:
+	for entry in diningHallMenuDict:				#sanity check
 		for i in range(0, len(diningHallMenuDict[entry])):
 			print("new message..")
 			print(diningHallMenuDict[entry][i])
@@ -344,6 +348,11 @@ diningHallMenuDict = {}
 #populates with info
 scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=38, second=00) #+4 hours ahead to deploy
 
+
+pullMenus(diningHallMenuDict, diningHallList)
+###########################__________________________###########################
+
+
 #print(diningHallMenuDict)
 scheduler.start()
 
@@ -352,50 +361,3 @@ scheduler.start()
 
 if __name__ == '__main__':
 	app.run()
-
-
-
-
-
-
-
-	'''
-response = requests.get('http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=BURSLEY%20DINING%20HALL&output=json&date=today')
-responseContent = json.loads(response.content)
-#print(responseContent['menu']['meal'][0]['course'][0])
-def sendDiningHall(diningHallIndex):
-	mealString = ""
-	for meal in range(0,3):
-		#print(responseContent['menu']['meal'][meal]['name'])							#breakfast//lunch//dinner
-		mealString = mealString + responseContent['menu']['meal'][meal]['name'] + "\n"
-		for course in range(0,len(responseContent['menu']['meal'][meal]['course'])):
-			#print(responseContent['menu']['meal'][meal]['course'][course]['name'])		#signature baked goods etc
-			mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['name'] + ":\n"
-			if (type(responseContent['menu']['meal'][meal]['course'][course]['menuitem']) != type({})):		#menu item names
-				for menuitem in range(0,len(responseContent['menu']['meal'][meal]['course'][course]['menuitem'])):
-					#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name'])
-					mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name']
-					if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]):	#menu item traits
-						mealString = mealString.rstrip()
-						mealString = mealString + " - "
-						for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait']:
-							#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait])
-							mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
-						mealString = mealString.rstrip(", ")
-					mealString = mealString + "\n"
-			else:
-				#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name'])		#menu item names
-				mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name']
-				if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem']):
-					mealString = mealString.rstrip()
-					mealString = mealString + " - "
-					for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait']:
-							#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait])
-							mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait] + ", "
-					mealString = mealString.rstrip(", ")
-				mealString = mealString + "\n"
-			mealString = mealString + "\n"
-		mealString = mealString + "\n\n"
-		print(mealString)
-		mealString = ""
-		'''
