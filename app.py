@@ -193,6 +193,8 @@ def decipherChoice(value):
 		print(value)
 	return myList
 
+#for 1, 3, 4, 5, 6
+#east quad just needs the %20, mosher%20jordan, north%20quad, south%20quad, location=twigs%20at%20oxford%20&output=json&date=today
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 #message logic
@@ -262,30 +264,85 @@ def webhook():
 
 	return "ok", 200
 
-#periodic message send, uses database APScheduler
 
-	
 
-#at a time of day cache the menus, APScheduler
-#http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=BURSLEY%20DINING%20HALL&output=json&date=today
-#response = requests.get('http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=BURSLEY%20DINING%20HALL&output=json&date=today')
-#5:30 AM Eastern
+
+###########_________CACHING__________############
+
+
+def cacheDiningHall(responseContent, index , diningHallMenuDict):
+	mealString = ""
+	for meal in range(0,3):
+		mealString = ""
+		#print(responseContent['menu']['meal'][meal]['name'])						 // breakfast//lunch//dinner
+		mealString = mealString + responseContent['menu']['meal'][meal]['name'] + "\n"
+		if (type(responseContent['menu']['meal'][meal]['course']) == type({})):
+			if (type(responseContent['menu']['meal'][meal]['course']['menuitem']) == type({})):	#not serving anything
+				mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem']['name']
+			else:
+				for item in range(0,len(responseContent['menu']['meal'][meal]['course']['menuitem'])):
+					mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem'][item]['name']
+		else:
+			for course in range(0,len(responseContent['menu']['meal'][meal]['course'])):
+				#print(responseContent['menu']['meal'][meal]['course'][course]['name'])		#signature baked goods etc
+				mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['name'] + ":\n"
+				if (type(responseContent['menu']['meal'][meal]['course'][course]['menuitem']) != type({})):		#menu item names
+					for menuitem in range(0,len(responseContent['menu']['meal'][meal]['course'][course]['menuitem'])):
+						#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name'])
+						mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name']
+						if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]):	#menu item traits
+							mealString = mealString.rstrip()
+							mealString = mealString + " - "
+							for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait']:
+								#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait])
+								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
+							mealString = mealString.rstrip(", ")
+						mealString = mealString + "\n"
+				else:
+					#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name'])		#menu item names
+					mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name']
+					if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem']):
+						mealString = mealString.rstrip()
+						mealString = mealString + " - "
+						for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait']:
+								#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait])
+								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait] + ", "
+						mealString = mealString.rstrip(", ")
+					mealString = mealString + "\n"
+				mealString = mealString + "\n"
+		#mealString = mealString
+		print(mealString.rstrip("\n"))				#send breakfast lunch and dinner here
+		print("I am being added..")
+		diningHallMenuDict[index].append(mealString.rstrip("\n"))
+
+def pullMenus(diningHallMenuDict, diningHallList):
+	for entry in range(0,6):
+		print("--" + diningHallList[entry] + "--") #send with just name here
+		print("I am being added..")
+		diningHallMenuDict[entry] = []
+		diningHallMenuDict[entry].append("--" + diningHallList[entry] + "--")
+		requestURL = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location='
+		if (entry == 3):
+			requestURL = requestURL + "mosher%20jordan" + '%20DINING%20HALL&output=json&date=today'
+			#print(requestURL)
+		elif (entry == 6):
+			requestURL = requestURL + 'twigs%20at%20oxford%20&output=json&date=today'
+			#print(requestURL)
+		else:
+			requestURL = requestURL + diningHallList[entry].replace(" ", "%20") + '%20DINING%20HALL&output=json&date=today'
+		cacheDiningHall(json.loads(requests.get(requestURL).content), entry, diningHallMenuDict)
+	for entry in diningHallMenuDict:
+		for i in range(0, len(diningHallMenuDict[entry])):
+			print("new message..")
+			print(diningHallMenuDict[entry][i])
+			print("end of message..")
+
+diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 diningHallMenuDict = {}
 
-def pullMenus():
-	for hall in diningHallList:
-		urlRequestString = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location=' + hall + '%20DINING%20HALL&output=json&date=today'
-		response = requests.get(urlRequestString)
-		print(diningHallMenuDict)
-		#diningHallMenuDict[hall] = json.loads(response.content)[?][?][]
-
-scheduler.add_job(pullMenus, 'cron', hour=22, minute=8, second=00) #+4 hours ahead to deploy
-
-def displayTime():
-	print(datetime.datetime.now().time())
-
-#scheduler.add_job(displayTime, 'interval', seconds=1)
+#populates with info
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=38, second=00) #+4 hours ahead to deploy
 
 #print(diningHallMenuDict)
 scheduler.start()
