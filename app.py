@@ -169,8 +169,8 @@ def attemptToParse(inputString):
 		elif not value.isdigit():
 			print("each value is not a digit")
 			return (False, choiceList)
-		elif not (int(value) > 0 and int(value) < 7):
-			print("not greater than 0 and not less than 7")
+		elif not (int(value) > 0 and int(value) < 8):
+			print("not greater than 0 and not less than 8")
 			return (False, choiceList)
 	choiceList = set(choiceList)
 	return (True, choiceList)
@@ -341,16 +341,19 @@ def pullMenus(diningHallMenuDict, diningHallList):
 			print(diningHallMenuDict[entry][i])
 			print("end of message..")
 
-	print(diningHallMenuDict)
 
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=31, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=37, second=00) #+4 hours ahead to deploy
 
-print(diningHallMenuDict)
+
+#mylist = [1,2,3]
+
+#pullMenus(diningHallMenuDict, diningHallList)
+#print(diningHallMenuDict[0])
 
 
 #pullMenus(diningHallMenuDict, diningHallList)
@@ -359,12 +362,13 @@ def sendToSubscribers():
 	for key in db.keys():
 		choiceList = decipherChoice(db.get(key))
 		for choice in range(0,len(choiceList)):
-			for i in range(0, len(diningHallMenuDict[choice])):
+			for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
 				sendMessage(key, diningHallMenuDict[choice][i])
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=25, second=00)
+
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=38, second=00)
 
 
 
@@ -375,4 +379,4 @@ scheduler.start()
 
 
 if __name__ == '__main__':
-	app.run()
+	app.run(port="6000")
