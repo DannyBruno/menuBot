@@ -353,14 +353,14 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 ###########################__________________________###########################
 def sendToSubscribers():
 	for key in db.keys():
-		choiceList = decipheredChoice(db.get(key))
+		choiceList = decipherChoice(db.get(key))
 		for choice in range(0,len(choiceList)):
 			for i in range(0, len(diningHallMenuDict[choice])):
 				sendMessage(key, diningHallMenuDict[choice][i])
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=23, second=00)
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=25, second=00)
 
 
 
