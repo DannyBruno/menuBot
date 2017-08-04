@@ -347,7 +347,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=37, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=44, second=00) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -370,7 +370,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=38, second=00)
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=45, second=00)
 
 
 #print(diningHallMenuDict)
