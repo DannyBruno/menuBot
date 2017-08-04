@@ -341,12 +341,14 @@ def pullMenus(diningHallMenuDict, diningHallList):
 			print(diningHallMenuDict[entry][i])
 			print("end of message..")
 
+	print(diningHallMenuDict)
+
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=21, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=31, second=00) #+4 hours ahead to deploy
 
 print(diningHallMenuDict)
 
