@@ -348,6 +348,8 @@ diningHallMenuDict = {}
 #populates with info
 scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=22, minute=21, second=00) #+4 hours ahead to deploy
 
+print(diningHallMenuDict)
+
 
 #pullMenus(diningHallMenuDict, diningHallList)
 ###########################__________________________###########################
