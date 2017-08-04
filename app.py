@@ -360,16 +360,17 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 ###########################__________________________###########################
 def sendToSubscribers():
 	for key in db.keys():
+		print(key)
 		choiceList = decipherChoice(db.get(key))
 		for choice in range(0,len(choiceList)):
 			for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-				sendMessage(key, diningHallMenuDict[choice][i])
+				sendMessage(key.decode('utf-8'), diningHallMenuDict[choice][i])
+	sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 
 
 
 
 scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=38, second=00)
-
 
 
 #print(diningHallMenuDict)
