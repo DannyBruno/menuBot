@@ -218,6 +218,7 @@ def webhook():
 	else:
 		if db.exists(senderID):
 			value = db.get(senderID)
+			print(value)
 			if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 				sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
 				sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
@@ -236,6 +237,7 @@ def webhook():
 					choiceString = "You have been subscribed to "
 					for key in range(0,len(decipheredChoice)-1):
 						choiceString  = choiceString + diningHallList[decipheredChoice[key]-1] + ", "
+
 					if len(decipherChoice) != 1:
 						choiceString = choiceString + "and " + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
 					else:
