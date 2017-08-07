@@ -352,7 +352,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=23, second=0) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=27, second=0) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -371,6 +371,9 @@ def sendToSubscribers():
 			choiceList = decipherChoice(db.get(key.decode('utf-8')))
 			for choice in range(0,len(choiceList)):
 				messageperHall = ""
+				print(choiceList)
+				print(choiceList[choice])
+				print(diningHallMenuDict)
 				for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
 					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i]
 				#time.sleep(1)
@@ -381,7 +384,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=23, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=27, second=10)
 
 
 #print(diningHallMenuDict)
