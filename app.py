@@ -380,7 +380,6 @@ def sendToSubscribers():
 					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i]
 				#time.sleep(1)
 				sendMessage(key.decode('utf-8'), messageperHall)
-		n = n + 1
 		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 
 
