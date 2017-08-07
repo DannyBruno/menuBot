@@ -352,7 +352,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=20, second=0) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=23, second=0) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -363,8 +363,8 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 
 #pullMenus(diningHallMenuDict, diningHallList)
 ###########################__________________________###########################
-n = 0;
 def sendToSubscribers():
+	n = 0
 	for key in db.keys():
 		if db.get(key.decode('utf-8')) > 0:
 			print("key %s: %s" % (n, key.decode('utf-8')))
@@ -381,7 +381,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=20, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=23, second=10)
 
 
 #print(diningHallMenuDict)
