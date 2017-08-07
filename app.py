@@ -3,6 +3,7 @@ import redis
 import sys
 import json
 import datetime
+import time
 
 import requests
 from flask import Flask, request
@@ -335,11 +336,11 @@ def pullMenus(diningHallMenuDict, diningHallList):
 		else:
 			requestURL = requestURL + diningHallList[entry].replace(" ", "%20") + '%20DINING%20HALL&output=json&date=today'
 		cacheDiningHall(json.loads(requests.get(requestURL).content), entry, diningHallMenuDict)
-	for entry in diningHallMenuDict:				#sanity check
-		for i in range(0, len(diningHallMenuDict[entry])):
-			print("new message..")
-			print(diningHallMenuDict[entry][i])
-			print("end of message..")
+	#for entry in diningHallMenuDict:				#sanity check
+		#for i in range(0, len(diningHallMenuDict[entry])):
+		#	print("new message..")
+		#	print(diningHallMenuDict[entry][i])
+		#	print("end of message..")
 
 
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
@@ -347,7 +348,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=47, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=57, second=00) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -360,17 +361,20 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 ###########################__________________________###########################
 def sendToSubscribers():
 	for key in db.keys():
-		print(key)
+		print("key one: %s" % key.decode('utf-8'))
 		choiceList = decipherChoice(db.get(key.decode('utf-8')))
 		for choice in range(0,len(choiceList)):
+			messageperHall = ""
 			for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-				sendMessage(key.decode('utf-8'), diningHallMenuDict[choice][i])
+				messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i]
+				#time.sleep(1)
+			sendMessage(key.decode('utf-8'), messageperHall)
 	sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=21, minute=47, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=21, minute=57, second=10)
 
 
 #print(diningHallMenuDict)
