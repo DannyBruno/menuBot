@@ -238,7 +238,7 @@ def webhook():
 					for key in range(0,len(decipheredChoice)-1):
 						choiceString  = choiceString + diningHallList[decipheredChoice[key]-1] + ", "
 
-					if len(decipherChoice) != 1:
+					if len(decipheredChoice) != 1:
 						choiceString = choiceString + "and " + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
 					else:
 						choiceString = choiceString + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
