@@ -236,8 +236,10 @@ def webhook():
 					choiceString = "You have been subscribed to "
 					for key in range(0,len(decipheredChoice)-1):
 						choiceString  = choiceString + diningHallList[decipheredChoice[key]-1] + ", "
-
-					choiceString = choiceString + "and " + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
+					if len(decipherChoice) != 1:
+						choiceString = choiceString + "and " + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
+					else:
+						choiceString = choiceString + diningHallList[decipheredChoice[len(decipheredChoice)-1]-1] + "."
 
 					sendMessage(senderID, choiceString)
 					sendMessage(senderID, "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
@@ -348,7 +350,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=57, second=00) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=02, second=30) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -374,7 +376,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=21, minute=57, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=03, second=10)
 
 
 #print(diningHallMenuDict)
