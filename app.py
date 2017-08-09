@@ -4,6 +4,7 @@ import sys
 import json
 import datetime
 import time
+import re
 
 import requests
 from flask import Flask, request
@@ -325,7 +326,7 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 		diningHallMenuDict[index].append(mealString.rstrip("\n"))
 
 def pullMenus(diningHallMenuDict, diningHallList):
-	for entry in range(0,6):
+	for entry in range(0,7):
 		print("--" + diningHallList[entry] + "--") #send with just name here
 		print("I am being added..")
 		diningHallMenuDict[entry] = []
@@ -335,16 +336,17 @@ def pullMenus(diningHallMenuDict, diningHallList):
 			requestURL = requestURL + "mosher%20jordan" + '%20DINING%20HALL&output=json&date=today'
 			#print(requestURL)
 		elif (entry == 6):
+			print("caching oxford")
 			requestURL = requestURL + 'twigs%20at%20oxford%20&output=json&date=today'
 			#print(requestURL)
 		else:
 			requestURL = requestURL + diningHallList[entry].replace(" ", "%20") + '%20DINING%20HALL&output=json&date=today'
 		cacheDiningHall(json.loads(requests.get(requestURL).content), entry, diningHallMenuDict)
-	#for entry in diningHallMenuDict:				#sanity check
-		#for i in range(0, len(diningHallMenuDict[entry])):
-		#	print("new message..")
-		#	print(diningHallMenuDict[entry][i])
-		#	print("end of message..")
+	for entry in diningHallMenuDict:				#sanity check
+		for i in range(0, len(diningHallMenuDict[entry])):
+			print("new message..")
+			print(diningHallMenuDict[entry][i])
+			print("end of message..")
 
 
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
@@ -352,7 +354,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=31, second=0) #+4 hours ahead to deploy
+#scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=21, minute=31, second=0) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -366,31 +368,48 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 def sendToSubscribers():
 	n = 0
 	for key in db.keys():
-		print("size of keys %s" % len(db.keys()))
+		#print("size of keys %s" % len(db.keys()))
 		if db.get(key.decode('utf-8')) > 0:
 			print("key %s: %s" % (n, key.decode('utf-8')))
 			n = n + 1
 			choiceList = decipherChoice(db.get(key.decode('utf-8')))
+			print(choiceList)
 			for choice in range(0,len(choiceList)):
 				messageperHall = ""
-				print(choiceList)
-				print(choiceList[choice])
-				print(diningHallMenuDict)
 				for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i]
-				#time.sleep(1)
-				sendMessage(key.decode('utf-8'), messageperHall)
+					#print("\n\n\neach choice i..")
+					#print(diningHallMenuDict[choiceList[choice]][i])
+					#print("each choice i..\n\n\n")
+					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i] + "\n"
+				#print("sending message for %s", choiceList[choice])
+				print ()
+
+				if (len(messageperHall) > 600):
+					for messageBit in re.split('\n |BREAKFAST |LUNCH |DINNER', messageperHall):
+						sendMessage(key.decode('utf-8'), messageBit)
+				else:
+					sendMessage(key.decode('utf-8'), messageperHall)
+				time.sleep(2)
+				#print("\n\n\n\nmessage per hall")
+				#print(messageperHall)
+				#print("message per hall\n\n\n\n")
 		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=31, second=10)
+#scheduler.add_job(sendToSubscribers, 'cron', hour=22, minute=31, second=10)
 
 
 #print(diningHallMenuDict)
-scheduler.start()
+#scheduler.start()
+db.set('1458256307549428', 3456)
 
+pullMenus(diningHallMenuDict, diningHallList)
+
+time.sleep(5)
+
+sendToSubscribers()
 
 
 
