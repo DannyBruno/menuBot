@@ -282,49 +282,99 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 		mealString = ""
 		#print(responseContent['menu']['meal'][meal]['name'])						 // breakfast//lunch//dinner
 		mealString = mealString + responseContent['menu']['meal'][meal]['name'] + "\n"
+		print(responseContent['menu']['meal'][meal]['name'] + "\n")
+		print(len(diningHallMenuDict[index]))
+		BLDindex = len(diningHallMenuDict[index])
+		traitSet = set()
 		if (type(responseContent['menu']['meal'][meal]['course']) == type({})):
 			if (type(responseContent['menu']['meal'][meal]['course']['menuitem']) == type({})):	#not serving anything
 				mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem']['name']
 			else:
 				for item in range(0,len(responseContent['menu']['meal'][meal]['course']['menuitem'])):
 					mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem'][item]['name']
+			#print("Start of this1..")
+			#print(mealString)
+			mealString = mealString.rstrip("\n")
+			diningHallMenuDict[index].append(mealString + "\n")
+			mealString = ""
+			#print("End of this1..")
 		else:
 			for course in range(0,len(responseContent['menu']['meal'][meal]['course'])):
 				#print(responseContent['menu']['meal'][meal]['course'][course]['name'])		#signature baked goods etc
-				mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['name'] + ":\n"
+				mealString = mealString + "-" + responseContent['menu']['meal'][meal]['course'][course]['name'] + "-\n"
 				if (type(responseContent['menu']['meal'][meal]['course'][course]['menuitem']) != type({})):		#menu item names
 					for menuitem in range(0,len(responseContent['menu']['meal'][meal]['course'][course]['menuitem'])):
 						#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name'])
 						mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name']
 						if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]):	#menu item traits
 							mealString = mealString.rstrip()
-							mealString = mealString + " - "
+							mealString = mealString + " - ("
 							for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait']:
 								if (responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] == 'glutenfree'):
 									mealString = mealString + 'gluten free, '
+									traitSet.add("gluten free")
 								else:
 									mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
+									traitSet.add(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait])
 							mealString = mealString.rstrip(", ")
+							mealString = mealString + ")"
 						mealString = mealString + "\n"
+
+			#print("Start of this2..")
+			#print(mealString)
+			#print("End of this2..")
 				else:
 					#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name'])		#menu item names
 					mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name']
 					if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem']):
+
 						mealString = mealString.rstrip()
-						mealString = mealString + " - "
+						mealString = mealString + " - ("
 						for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait']:
+							trait
 							if (responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'] == 'glutenfree'):
 								mealString = mealString + 'gluten free, '
+								traitSet.add("gluten free")
 							else:	
 								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait] + ", "
+								traitSet.add(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait])
 						mealString = mealString.rstrip(", ")
+						mealString = mealString + ")"
 					mealString = mealString + "\n"
 				mealString = mealString + "\n"
+				#print("Start of this3..")
+				#print(mealString)
+				mealString = mealString.rstrip("\n")
+				diningHallMenuDict[index].append(mealString + "\n")
+				mealString = ""
+				#print("End of this3..")
 		#mealString = mealString
-		print(mealString.rstrip("\n"))				#send breakfast lunch and dinner here
-		print("I am being added..")
-		diningHallMenuDict[index].append(mealString.rstrip("\n"))
+		#print(mealString.rstrip("\n"))				#send breakfast lunch and dinner here
+		#print("I am being added.."
+		print("BLD index, should be breakfast lunch or dinner: %s" % diningHallMenuDict[index][BLDindex])
+		#print(traitSet)
+		if (len(traitSet) != 0):
+			traitSetString = ""
+			traitSet = list(traitSet)
+			for trait in range(0,len(traitSet)):
+				traitSetString = traitSetString + traitSet[trait] + ", "
+			traitSetString = traitSetString.rstrip(", ")
+			#print(traitSetString)
 
+			#split with returns
+			splitStr = diningHallMenuDict[index][BLDindex].split("\n", 1)
+			print(splitStr)
+			splitStr[0] = splitStr[0] + "\n! " + traitSetString + " !" + "\n\n"
+
+			putBacktogether = ""
+			for string in range(0, len(splitStr)):
+				putBacktogether = putBacktogether + splitStr[string]
+
+			diningHallMenuDict[index][BLDindex] = putBacktogether
+		print("BLD index, should have traits added: %s" % diningHallMenuDict[index][BLDindex])
+	#("BLD index, should be breakfast lunch or dinner: %s" % diningHallMenuDict[index][BLDindex])
+	print("DONE CACHING..")
+#.rstrip("\n")
 def pullMenus(diningHallMenuDict, diningHallList):
 	for entry in range(0,7):
 		print("--" + diningHallList[entry] + "--") #send with just name here
@@ -367,6 +417,7 @@ diningHallMenuDict = {}
 ###########################__________________________###########################
 def sendToSubscribers():
 	n = 0
+
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
 		if db.get(key.decode('utf-8')) > 0:
@@ -374,25 +425,29 @@ def sendToSubscribers():
 			n = n + 1
 			choiceList = decipherChoice(db.get(key.decode('utf-8')))
 			print(choiceList)
+			userInfo = requests.get("https://graph.facebook.com/v2.6/" + key.decode('utf-8') + "?fields=first_name,last_name&access_token=" + pageAccessToken).json()
+			sendMessage(key.decode('utf-8'), "Good Morning " + userInfo["first_name"] + "!")
+			sendMessage(key.decode('utf-8'), "It's " + time.strftime("%a, %d %b %Y") + ".")
 			for choice in range(0,len(choiceList)):
 				messageperHall = ""
+				messageList = []
 				for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-					#print("\n\n\neach choice i..")
-					#print(diningHallMenuDict[choiceList[choice]][i])
-					#print("each choice i..\n\n\n")
+					if (choice == 3):
+						print("block..")
+						print(diningHallMenuDict[choiceList[choice]][i])
+						print("block..")
+				
 					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i] + "\n"
-				#print("sending message for %s", choiceList[choice])
-				print ()
+					if (len(messageperHall) > 250):
+						messageList.append(messageperHall)
+						messageperHall = ""
+			
+				messageList.append(messageperHall)
+				print(messageList)
+				for index in range(0, len(messageList)):
+					print(len(messageList[index]))
+					sendMessage(key.decode('utf-8'), messageList[index])
 
-				if (len(messageperHall) > 600):
-					for messageBit in re.split('\n |BREAKFAST |LUNCH |DINNER', messageperHall):
-						sendMessage(key.decode('utf-8'), messageBit)
-				else:
-					sendMessage(key.decode('utf-8'), messageperHall)
-				time.sleep(2)
-				#print("\n\n\n\nmessage per hall")
-				#print(messageperHall)
-				#print("message per hall\n\n\n\n")
 		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 
 
@@ -403,13 +458,14 @@ def sendToSubscribers():
 
 #print(diningHallMenuDict)
 #scheduler.start()
-db.set('1458256307549428', 3456)
+'''______GOOD TESTING, NEED TO MAKE SURE LUNCH STARTS A NEW MSG ETC, MAY USE SPECIAL CHAR______'''
+#db.set('1458256307549428', 3456)
 
-pullMenus(diningHallMenuDict, diningHallList)
+#pullMenus(diningHallMenuDict, diningHallList)
 
-time.sleep(5)
+#time.sleep(5)
 
-sendToSubscribers()
+#sendToSubscribers()
 
 
 
