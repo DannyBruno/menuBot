@@ -9,18 +9,18 @@ import re
 import requests
 from flask import Flask, request
 from apscheduler.schedulers.background import BackgroundScheduler
-from config import *
+#from config import *
 #APScheduler
 
 app = Flask(__name__)
-app.config.from_object(os.environ.get('APP_SETTINGS', 'config.ProductionConfig'))
+#app.config.from_object(os.environ.get('APP_SETTINGS', 'config.ProductionConfig'))
 
-pageAccessToken = app.config['PAGE_ACCESS_TOKEN']
+pageAccessToken = os.environ['PAGE_ACCESS_TOKEN']
 
 
 #url = os.environ.get("REDIS_URL")
 #print(url)
-db = redis.from_url(app.config['REDIS_URL'])
+db = redis.from_url(os.environ['REDIS_URL'])
 db.set_response_callback('GET',int)
 
 
