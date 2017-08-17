@@ -1,5 +1,9 @@
 UMich Dining Hall Messenger Bot v1.0
 
+
+
+
+
 What?
 ___________
 
@@ -9,10 +13,13 @@ This is a Facebook Messenger chat bot designed to disseminate University of Mich
 If you're a UMich student (or just curious), feel free to stop by and check it out: 
 	Facebook.com/UMichEats (renovations coming soon) 
 
+
+
 How?
 ___________
 
 The bot is written in Python, and uses a number of helpful libraries (Python-Flask, APScheduler, Python Requests primarily) to interface with Facebook's Graph and Messenger Send APIs.  
+
 
 
 Why?
