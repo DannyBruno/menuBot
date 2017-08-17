@@ -319,10 +319,6 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 							mealString = mealString.rstrip(", ")
 							mealString = mealString + ")"
 						mealString = mealString + "\n"
-
-			#print("Start of this2..")
-			#print(mealString)
-			#print("End of this2..")
 				else:
 					#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name'])		#menu item names
 					mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name']
@@ -426,29 +422,35 @@ def sendToSubscribers():
 			choiceList = decipherChoice(db.get(key.decode('utf-8')))
 			print(choiceList)
 			userInfo = requests.get("https://graph.facebook.com/v2.6/" + key.decode('utf-8') + "?fields=first_name,last_name&access_token=" + pageAccessToken).json()
+			sendMessage(key.decode('utf-8'), "----------------------")
 			sendMessage(key.decode('utf-8'), "Good Morning " + userInfo["first_name"] + "!")
 			sendMessage(key.decode('utf-8'), "It's " + time.strftime("%a, %d %b %Y") + ".")
 			for choice in range(0,len(choiceList)):
 				messageperHall = ""
 				messageList = []
 				for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-					if (choice == 3):
-						print("block..")
-						print(diningHallMenuDict[choiceList[choice]][i])
-						print("block..")
-				
-					messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i] + "\n"
-					if (len(messageperHall) > 250):
+
+
+					if (diningHallMenuDict[choiceList[choice]][i][:5] == "LUNCH" or diningHallMenuDict[choiceList[choice]][i][:6] == "DINNER" or diningHallMenuDict[choiceList[choice]][i][:9] == "BREAKFAST"):
+						#submit current str and start new one with this starting
 						messageList.append(messageperHall)
-						messageperHall = ""
+						messageperHall = diningHallMenuDict[choiceList[choice]][i]
+					else:
+						messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i] + "\n"
+						if (len(messageperHall) > 250):
+							messageList.append(messageperHall)
+							messageperHall = ""
 			
 				messageList.append(messageperHall)
 				print(messageList)
 				for index in range(0, len(messageList)):
+					print("Block..")
 					print(len(messageList[index]))
+					print("Block..")
 					sendMessage(key.decode('utf-8'), messageList[index])
 
 		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
+		sendMessage(key.decode('utf-8'), "----------------------")
 
 
 
@@ -459,13 +461,13 @@ def sendToSubscribers():
 #print(diningHallMenuDict)
 #scheduler.start()
 '''______GOOD TESTING, NEED TO MAKE SURE LUNCH STARTS A NEW MSG ETC, MAY USE SPECIAL CHAR______'''
-#db.set('1458256307549428', 3456)
+db.set('1458256307549428', 3456)
 
-#pullMenus(diningHallMenuDict, diningHallList)
+pullMenus(diningHallMenuDict, diningHallList)
 
-#time.sleep(5)
+time.sleep(5)
 
-#sendToSubscribers()
+sendToSubscribers()
 
 
 
