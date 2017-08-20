@@ -2,7 +2,7 @@ import os
 import redis
 import sys
 import json
-import datetime
+from datetime import datetime
 import time
 import re
 
@@ -204,6 +204,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 #message logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
+	print(str(datetime.now()))
 	#print(request)
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
@@ -236,6 +237,8 @@ def webhook():
 					choice = buildValue(attempt[1])
 					db.set(senderID, choice) #send confirmation message
 					decipheredChoice = decipherChoice(choice)
+
+					print("Choices were: %s" % decipheredChoice)
 
 					choiceString = "You have been subscribed to "
 					for key in range(0,len(decipheredChoice)-1):
@@ -404,7 +407,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=12, minute=50, second=30) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=12, minute=56, second=30) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -460,7 +463,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=12, minute=51, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=12, minute=57, second=10)
 
 
 #print(diningHallMenuDict)
