@@ -221,7 +221,7 @@ def webhook():
 	else:
 		if db.exists(senderID):
 			value = db.get(senderID)
-			print(value)
+			print("The value is %s" % value)
 			if value == 0 and (body['message']['text'].lower() == 'yes' or body['message']['text'].lower() == 'y'):
 				sendMessage(senderID, "Awesome! You're almost done- just select which dining halls you'd like to subscibe to:")
 				sendMessage(senderID, "1. Bursley, 2. East Quad, 3. Markley, 4. Mosher-Jordan (Mojo), 5. North Quad, 6. South Quad, 7. Twigs (Oxford)")
@@ -279,6 +279,8 @@ def webhook():
 
 
 def cacheDiningHall(responseContent, index , diningHallMenuDict):
+	print("Caching!!")
+
 	mealString = ""
 	for meal in range(0,3):
 		mealString = ""
@@ -402,7 +404,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=12, minute=40, second=30) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=12, minute=50, second=30) #+4 hours ahead to deploy
 
 
 #mylist = [1,2,3]
@@ -414,6 +416,7 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 #pullMenus(diningHallMenuDict, diningHallList)
 ###########################__________________________###########################
 def sendToSubscribers():
+	print("Sending to subscribers!!")
 	n = 0
 
 	for key in db.keys():
@@ -457,7 +460,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=12, minute=41, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=12, minute=51, second=10)
 
 
 #print(diningHallMenuDict)
