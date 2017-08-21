@@ -2,9 +2,9 @@ import os
 import redis
 import sys
 import json
-from datetime import datetime
 import time
 import re
+from time import gmtime, strftime
 
 import requests
 from flask import Flask, request
@@ -134,7 +134,7 @@ print(db.hget("Dan"));
 
 scheduler = BackgroundScheduler()
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
-datetime.datetime.now().time()
+#datetime.datetime.now().time()
 
 #frontend
 @app.route('/')
@@ -200,11 +200,11 @@ def decipherChoice(value):
 #for 1, 3, 4, 5, 6
 #east quad just needs the %20, mosher%20jordan, north%20quad, south%20quad, location=twigs%20at%20oxford%20&output=json&date=today
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
+#strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 #message logic
 @app.route('/webhook', methods=['POST'])
 def webhook():
-	print(str(datetime.now()))
 	#print(request)
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
