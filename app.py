@@ -2,10 +2,10 @@ import os
 import redis
 import sys
 import json
-import datetime
+from datetime import datetime
+import pytz
 import time
 import re
-from pytz import timezone
 
 import requests
 from flask import Flask, request
@@ -207,7 +207,6 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 @app.route('/webhook', methods=['POST'])
 def webhook():
 	#print(request)
-	print(datetime.datetime.now().time())
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	print(senderID)
@@ -409,7 +408,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=2, second=10, timezone=timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=2, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -465,7 +464,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=2, second=45, timezone=timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=2, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
