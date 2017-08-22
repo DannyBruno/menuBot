@@ -205,7 +205,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 @app.route('/webhook', methods=['POST'])
 def webhook():
 	#print(request)
-	datetime.datetime.now().time()
+	print(datetime.datetime.now().time())
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	print(senderID)
