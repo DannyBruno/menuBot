@@ -414,7 +414,7 @@ print(easternNow)
 print("Time..")
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=29, second=10, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=31, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -427,7 +427,7 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 ###########################__________________________###########################
 def sendToSubscribers():
 	print("Sending to subscribers!!")
-	print("The keys in keys: %s" % db.keys())
+	#print("The keys in keys: %s" % db.keys())
 
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
@@ -469,7 +469,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=29, second=45, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=41, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
