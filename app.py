@@ -2,9 +2,8 @@ import os
 import redis
 import sys
 import json
-import time
+import datetime
 import re
-from time import gmtime, strftime
 
 import requests
 from flask import Flask, request
@@ -206,6 +205,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 @app.route('/webhook', methods=['POST'])
 def webhook():
 	#print(request)
+	datetime.datetime.now().time()
 	messageObject = json.loads(request.data)
 	senderID = messageObject['entry'][0]['messaging'][0]['sender']['id']
 	print(senderID)
