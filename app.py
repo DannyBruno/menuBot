@@ -414,7 +414,7 @@ print(easternNow)
 print("Time..")
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=31, second=10, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=33, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -469,7 +469,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=41, second=45, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=33, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
