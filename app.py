@@ -414,7 +414,7 @@ print(easternNow)
 print("Time..")
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=36, second=10, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -427,12 +427,13 @@ scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=
 ###########################__________________________###########################
 def sendToSubscribers():
 	print("Sending to subscribers!!")
-	#print("The keys in keys: %s" % db.keys())
+	n = 0
 
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
 		if db.get(key.decode('utf-8')) > 0:
-			#print("key %s: %s" % (n, key.decode('utf-8')))
+			print("key %s: %s" % (n, key.decode('utf-8')))
+			n = n + 1
 			choiceList = decipherChoice(db.get(key.decode('utf-8')))
 			print(choiceList)
 			userInfo = requests.get("https://graph.facebook.com/v2.6/" + key.decode('utf-8') + "?fields=first_name,last_name&access_token=" + pageAccessToken).json()
@@ -462,6 +463,7 @@ def sendToSubscribers():
 					print(len(messageList[index]))
 					print("Block..")
 					sendMessage(key.decode('utf-8'), messageList[index])
+					time.sleep(.25)
 
 		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
 		sendMessage(key.decode('utf-8'), "----------------------")
@@ -469,7 +471,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=36, second=45, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
