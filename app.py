@@ -407,8 +407,14 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 
 diningHallMenuDict = {}
 
+print("Time..")
+tz = pytz.timezone('US/Eastern')
+easternNow = datetime.now(tz)
+print(easternNow)
+print("Time..")
+
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=14, second=10, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -464,11 +470,12 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=14, second=45, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
-#scheduler.start()
+scheduler.start()
+
 '''______GOOD TESTING, NEED TO MAKE SURE LUNCH STARTS A NEW MSG ETC, MAY USE SPECIAL CHAR______'''
 #db.set('1458256307549428', 3456)
 
