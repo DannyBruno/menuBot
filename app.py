@@ -3,7 +3,9 @@ import redis
 import sys
 import json
 import datetime
+import time
 import re
+from pytz import timezone
 
 import requests
 from flask import Flask, request
@@ -407,7 +409,7 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 diningHallMenuDict = {}
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=12, minute=56, second=30) #+4 hours ahead to deploy
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=2, second=10, timezone=timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -463,7 +465,7 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=12, minute=57, second=10)
+scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=2, second=45, timezone=timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
