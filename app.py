@@ -9,7 +9,7 @@ import re
 
 import requests
 from flask import Flask, request
-from apscheduler.schedulers.background import BackgroundScheduler
+#from apscheduler.schedulers.background import BackgroundScheduler
 #from config import *
 #APScheduler
 
@@ -133,14 +133,10 @@ print(db.hget("Dan"));
 
 
 
-scheduler = BackgroundScheduler()
+#scheduler = BackgroundScheduler()
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
 #datetime.datetime.now().time()
 
-#frontend
-@app.route('/')
-def hello_world():
-    return 'Hello, World!'
 
 def sendMessage(senderID, message):
 	payload = {
@@ -414,7 +410,7 @@ print(easternNow)
 print("Time..")
 
 #populates with info
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
+#scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
 #mylist = [1,2,3]
@@ -471,11 +467,11 @@ def sendToSubscribers():
 
 
 
-scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
+#scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
-scheduler.start()
+#scheduler.start()
 
 '''______GOOD TESTING, NEED TO MAKE SURE LUNCH STARTS A NEW MSG ETC, MAY USE SPECIAL CHAR______'''
 #db.set('1458256307549428', 3456)
@@ -485,6 +481,30 @@ scheduler.start()
 #time.sleep(5)
 
 #sendToSubscribers()
+
+#frontend
+@app.route('/')
+def hello_world():
+    return 'Hello, World!'
+
+
+@app.route('/request', methods=['POST'])
+def parseClockProcess():
+	incomingRequest = json.loads(request.data)
+	secret_key = request.args.get('secret_key')
+	if secret_key == os.environ['secret_key']:
+		try:
+			if incomingRequest['request'] == 'send':
+				sendToSubscribers()
+			elif incomingRequest['request'] == 'cache':
+				pullMenus(diningHallMenuDict, diningHallList)
+			else:
+				return json.dumps({'Failure': 'Invalid Request Syntax'}), 400
+		except ValueError:
+			return json.dumps({'Failure': 'Invalid Request Syntax'}), 400
+	else:
+		return json.dumps({'Failure': 'Invalid Permissions'}), 400
+
 
 
 
