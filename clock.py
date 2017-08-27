@@ -1,8 +1,8 @@
 import pytz
 import os
 
-from flask import Flask, request
 from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask, request
 from sending import sendToSubscribers
 from caching import pullMenus
 
