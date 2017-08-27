@@ -35,10 +35,10 @@ import redis
 scheduler = BackgroundScheduler()
 
 
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=16, minute=7, second=10, timezone=pytz.timezone('US/Eastern'))
 	
 
-scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
+scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=16, minute=7, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 scheduler.start()
