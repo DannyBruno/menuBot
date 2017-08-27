@@ -9,9 +9,7 @@ import re
 
 import requests
 from flask import Flask, request
-#from apscheduler.schedulers.background import BackgroundScheduler
-#from config import *
-#APScheduler
+
 
 app = Flask(__name__)
 #app.config.from_object(os.environ.get('APP_SETTINGS', 'config.ProductionConfig'))
@@ -124,18 +122,8 @@ except ConnectionError as err:
 getStarted = requests.get("https://graph.facebook.com/v2.6/me/messenger_profile?fields=get_started&access_token=" + pageAccessToken)
 print (getStarted.json())
 
-###
-'''
-db.set("Dan", ["1","2","3"]);
-print(db.hget("Dan"));
-'''
-###
 
 
-
-#scheduler = BackgroundScheduler()
-diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
-#datetime.datetime.now().time()
 
 
 def sendMessage(senderID, message):
@@ -275,134 +263,6 @@ def webhook():
 
 
 
-###########_________CACHING__________############
-
-
-def cacheDiningHall(responseContent, index , diningHallMenuDict):
-	print("Caching!!")
-
-	mealString = ""
-	for meal in range(0,3):
-		mealString = ""
-		#print(responseContent['menu']['meal'][meal]['name'])						 // breakfast//lunch//dinner
-		mealString = mealString + responseContent['menu']['meal'][meal]['name'] + "\n"
-		print(responseContent['menu']['meal'][meal]['name'] + "\n")
-		print(len(diningHallMenuDict[index]))
-		BLDindex = len(diningHallMenuDict[index])
-		traitSet = set()
-		if (type(responseContent['menu']['meal'][meal]['course']) == type({})):
-			if (type(responseContent['menu']['meal'][meal]['course']['menuitem']) == type({})):	#not serving anything
-				mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem']['name']
-			else:
-				for item in range(0,len(responseContent['menu']['meal'][meal]['course']['menuitem'])):
-					mealString = mealString + responseContent['menu']['meal'][meal]['course']['menuitem'][item]['name']
-			#print("Start of this1..")
-			#print(mealString)
-			mealString = mealString.rstrip("\n")
-			diningHallMenuDict[index].append(mealString + "\n")
-			mealString = ""
-			#print("End of this1..")
-		else:
-			for course in range(0,len(responseContent['menu']['meal'][meal]['course'])):
-				#print(responseContent['menu']['meal'][meal]['course'][course]['name'])		#signature baked goods etc
-				mealString = mealString + "-" + responseContent['menu']['meal'][meal]['course'][course]['name'] + "-\n"
-				if (type(responseContent['menu']['meal'][meal]['course'][course]['menuitem']) != type({})):		#menu item names
-					for menuitem in range(0,len(responseContent['menu']['meal'][meal]['course'][course]['menuitem'])):
-						#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name'])
-						mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['name']
-						if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]):	#menu item traits
-							mealString = mealString.rstrip()
-							mealString = mealString + " - ("
-							for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait']:
-								if (responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] == 'glutenfree'):
-									mealString = mealString + 'gluten free, '
-									traitSet.add("gluten free")
-								else:
-									mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait] + ", "
-									traitSet.add(responseContent['menu']['meal'][meal]['course'][course]['menuitem'][menuitem]['trait'][trait])
-							mealString = mealString.rstrip(", ")
-							mealString = mealString + ")"
-						mealString = mealString + "\n"
-				else:
-					#print(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name'])		#menu item names
-					mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['name']
-					if ('trait' in responseContent['menu']['meal'][meal]['course'][course]['menuitem']):
-
-						mealString = mealString.rstrip()
-						mealString = mealString + " - ("
-						for trait in responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait']:
-							trait
-							if (responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'] == 'glutenfree'):
-								mealString = mealString + 'gluten free, '
-								traitSet.add("gluten free")
-							else:	
-								mealString = mealString + responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait] + ", "
-								traitSet.add(responseContent['menu']['meal'][meal]['course'][course]['menuitem']['trait'][trait])
-						mealString = mealString.rstrip(", ")
-						mealString = mealString + ")"
-					mealString = mealString + "\n"
-				mealString = mealString + "\n"
-				#print("Start of this3..")
-				#print(mealString)
-				mealString = mealString.rstrip("\n")
-				diningHallMenuDict[index].append(mealString + "\n")
-				mealString = ""
-				#print("End of this3..")
-		#mealString = mealString
-		#print(mealString.rstrip("\n"))				#send breakfast lunch and dinner here
-		#print("I am being added.."
-		print("BLD index, should be breakfast lunch or dinner: %s" % diningHallMenuDict[index][BLDindex])
-		#print(traitSet)
-		if (len(traitSet) != 0):
-			traitSetString = ""
-			traitSet = list(traitSet)
-			for trait in range(0,len(traitSet)):
-				traitSetString = traitSetString + traitSet[trait] + ", "
-			traitSetString = traitSetString.rstrip(", ")
-			#print(traitSetString)
-
-			#split with returns
-			splitStr = diningHallMenuDict[index][BLDindex].split("\n", 1)
-			print(splitStr)
-			splitStr[0] = splitStr[0] + "\n! " + traitSetString + " !" + "\n\n"
-
-			putBacktogether = ""
-			for string in range(0, len(splitStr)):
-				putBacktogether = putBacktogether + splitStr[string]
-
-			diningHallMenuDict[index][BLDindex] = putBacktogether
-		print("BLD index, should have traits added: %s" % diningHallMenuDict[index][BLDindex])
-	#("BLD index, should be breakfast lunch or dinner: %s" % diningHallMenuDict[index][BLDindex])
-	print("DONE CACHING..")
-#.rstrip("\n")
-def pullMenus(diningHallMenuDict, diningHallList):
-	for entry in range(0,7):
-		print("--" + diningHallList[entry] + "--") #send with just name here
-		print("I am being added..")
-		diningHallMenuDict[entry] = []
-		diningHallMenuDict[entry].append("--" + diningHallList[entry] + "--")
-		requestURL = 'http://www.housing.umich.edu/files/helper_files/js/xml2print.php?location='
-		if (entry == 3):
-			requestURL = requestURL + "mosher%20jordan" + '%20DINING%20HALL&output=json&date=today'
-			#print(requestURL)
-		elif (entry == 6):
-			print("caching oxford")
-			requestURL = requestURL + 'twigs%20at%20oxford%20&output=json&date=today'
-			#print(requestURL)
-		else:
-			requestURL = requestURL + diningHallList[entry].replace(" ", "%20") + '%20DINING%20HALL&output=json&date=today'
-		cacheDiningHall(json.loads(requests.get(requestURL).content), entry, diningHallMenuDict)
-	for entry in diningHallMenuDict:				#sanity check
-		for i in range(0, len(diningHallMenuDict[entry])):
-			print("new message..")
-			print(diningHallMenuDict[entry][i])
-			print("end of message..")
-
-
-diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
-
-diningHallMenuDict = {}
-
 print("Time..")
 tz = pytz.timezone('US/Eastern')
 easternNow = datetime.now(tz)
@@ -413,67 +273,13 @@ print("Time..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
 
 
-#mylist = [1,2,3]
-
-#pullMenus(diningHallMenuDict, diningHallList)
-#print(diningHallMenuDict[0])
-
-
-#pullMenus(diningHallMenuDict, diningHallList)
-###########################__________________________###########################
-def sendToSubscribers():
-	print("Sending to subscribers!!")
-	n = 0
-
-	for key in db.keys():
-		#print("size of keys %s" % len(db.keys()))
-		if db.get(key.decode('utf-8')) > 0:
-			print("key %s: %s" % (n, key.decode('utf-8')))
-			n = n + 1
-			choiceList = decipherChoice(db.get(key.decode('utf-8')))
-			print(choiceList)
-			userInfo = requests.get("https://graph.facebook.com/v2.6/" + key.decode('utf-8') + "?fields=first_name,last_name&access_token=" + pageAccessToken).json()
-			sendMessage(key.decode('utf-8'), "----------------------")
-			sendMessage(key.decode('utf-8'), "Good Morning " + userInfo["first_name"] + "!")
-			sendMessage(key.decode('utf-8'), "It's " + time.strftime("%a, %d %b %Y") + ".")
-			for choice in range(0,len(choiceList)):
-				messageperHall = ""
-				messageList = []
-				for i in range(0, len(diningHallMenuDict[choiceList[choice]])):
-
-
-					if (diningHallMenuDict[choiceList[choice]][i][:5] == "LUNCH" or diningHallMenuDict[choiceList[choice]][i][:6] == "DINNER" or diningHallMenuDict[choiceList[choice]][i][:9] == "BREAKFAST"):
-						#submit current str and start new one with this starting
-						messageList.append(messageperHall)
-						messageperHall = diningHallMenuDict[choiceList[choice]][i]
-					else:
-						messageperHall = messageperHall + diningHallMenuDict[choiceList[choice]][i] + "\n"
-						if (len(messageperHall) > 250):
-							messageList.append(messageperHall)
-							messageperHall = ""
-			
-				messageList.append(messageperHall)
-				print(messageList)
-				for index in range(0, len(messageList)):
-					print("Block..")
-					print(len(messageList[index]))
-					print("Block..")
-					sendMessage(key.decode('utf-8'), messageList[index])
-					time.sleep(.25)
-
-		sendMessage(key.decode('utf-8'), "If you would like to edit your selection simply message \"edit\" any time. Additionally, to unsubscribe message \"unsubscribe\" (but we'll be sad to see you go!).")
-		sendMessage(key.decode('utf-8'), "----------------------")
-
-
-
-
 #scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
 
 
 #print(diningHallMenuDict)
 #scheduler.start()
 
-'''______GOOD TESTING, NEED TO MAKE SURE LUNCH STARTS A NEW MSG ETC, MAY USE SPECIAL CHAR______'''
+'''______GOOD TESTING______'''
 #db.set('1458256307549428', 3456)
 
 #pullMenus(diningHallMenuDict, diningHallList)
@@ -486,24 +292,6 @@ def sendToSubscribers():
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
-
-
-@app.route('/request', methods=['POST'])
-def parseClockProcess():
-	incomingRequest = json.loads(request.data)
-	secret_key = request.args.get('secret_key')
-	if secret_key == os.environ['secret_key']:
-		try:
-			if incomingRequest['request'] == 'send':
-				sendToSubscribers()
-			elif incomingRequest['request'] == 'cache':
-				pullMenus(diningHallMenuDict, diningHallList)
-			else:
-				return json.dumps({'Failure': 'Invalid Request Syntax'}), 400
-		except ValueError:
-			return json.dumps({'Failure': 'Invalid Request Syntax'}), 400
-	else:
-		return json.dumps({'Failure': 'Invalid Permissions'}), 400
 
 
 
