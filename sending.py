@@ -1,6 +1,17 @@
+import redis
+import requests
+import json
+import time
+from datetime import datetime
 
+db = redis.from_url(os.environ['REDIS_URL'])
+db.set_response_callback('GET',int)
+pageAccessToken = os.environ['PAGE_ACCESS_TOKEN']
 
 def sendMessage(senderID, message):
+	headers = {
+	"Content-Type": "application/json"
+	}
 	payload = {
   		"recipient":{
   			"id":senderID
@@ -22,12 +33,13 @@ def decipherChoice(value):
 	return myList
 
 #send to Subs
-def sendToSubscribers():
+def sendToSubscribers(diningHallMenuDict):
 	print("Sending to subscribers!!")
 	n = 0
 
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
+		#print(db.get(key.decode('utf-8')))
 		if db.get(key.decode('utf-8')) > 0:
 			print("key %s: %s" % (n, key.decode('utf-8')))
 			n = n + 1
