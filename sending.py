@@ -3,6 +3,7 @@ import requests
 import json
 import time
 from datetime import datetime
+import os
 
 db = redis.from_url(os.environ['REDIS_URL'])
 db.set_response_callback('GET',int)
