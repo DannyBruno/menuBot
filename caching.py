@@ -99,7 +99,7 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 			print("BLD index, should have traits added: %s" % diningHallMenuDict[index][BLDindex])
 
 		else:
-			mealString = mealString + diningHallList[index] + " is not serving " + responseContent['menu']['meal'][meal]['name'] + " on this date\n"
+			mealString = mealString + diningHallList[index] + " is not serving " + responseContent['menu']['meal'][meal]['name'].lower() + " on this date\n"
 			mealString = mealString.rstrip("\n")
 			diningHallMenuDict[index].append(mealString + "\n")
 			mealString = ""
@@ -113,6 +113,7 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 #.rstrip("\n")
 
 def pullMenus(diningHallMenuDict, diningHallList):
+	print("Working")
 	for entry in range(0,7):
 		print("--" + diningHallList[entry] + "--") #send with just name here
 		print("I am being added..")
