@@ -30,7 +30,7 @@ headers = {
 
 #for testing###################################################
 db.flushdb()
-
+'''
 deleteMessagePayload = {
   "fields":[
     "greeting"
@@ -78,7 +78,7 @@ greetingsPayload = {
   "greeting":[
     {
       "locale":"default",
-      "text":"Hello!"
+      "text":"Welcome to UmichEats!"
     }
   ] 
 } 
@@ -123,7 +123,7 @@ getStarted = requests.get("https://graph.facebook.com/v2.6/me/messenger_profile?
 print (getStarted.json())
 
 
-
+'''
 
 
 def sendMessage(senderID, message):
