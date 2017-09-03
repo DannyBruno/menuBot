@@ -11,11 +11,9 @@ from caching import pullMenus
 
 
 
+#dictDb = redis.from_url(os.environ['REDIS_URL'], db= 2)
+dictDb = redis.from_url('redis://h:p3116b29cf75492a50fe130ffeb19d111fe87d4b0daea9440e235fec5a5f14300@ec2-34-224-49-43.compute-1.amazonaws.com:45779', db= 2)
 
-diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
-
-
-diningHallMenuDict = {}
 
 q = Queue(connection=conn)
 
@@ -44,24 +42,16 @@ scheduler = BlockingScheduler()
 
 print("Job 1 Added..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', [diningHallMenuDict, diningHallList], hour=18, minute=57, second=10, timezone=pytz.timezone('US/Eastern'))
-def spinCacheWorker(diningHallMenuDict, diningHallList):
-	diningHallMenuDict = q.enqueue(pullMenus, diningHallMenuDict, diningHallList)
-	print(diningHallMenuDict)
+@scheduler.scheduled_job('cron', hour=19, minute=12, second=10, timezone=pytz.timezone('US/Eastern'))
+def spinCacheWorker():
+	result = q.enqueue(pullMenus)
 
-	def spinSendWorker(diningHallMenuDict):
-		q.enqueue(sendToSubscribers, diningHallMenuDict)
-
-	print("Job 2 added..")
-	scheduler.add_job(spinSendWorker, 'cron', [diningHallMenuDict], hour=18, minute=57, second=45, timezone=pytz.timezone('US/Eastern'))
-
-'''
 print("Job 2 added..")
-scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', [diningHallMenuDict], hour=18, minute=43, second=45, timezone=pytz.timezone('US/Eastern'))
-def spinSendWorker(diningHallMenuDict):
-	q.enqueue(sendToSubscribers, diningHallMenuDict)
-'''
+#scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
+@scheduler.scheduled_job('cron', hour=19, minute=12, second=45, timezone=pytz.timezone('US/Eastern'))
+def spinSendWorker():
+	result = q.enqueue(sendToSubscribers, db.hgetall("diningHallMenuDict"))
+
 scheduler.start()
 print("Scheduler started")
 print("~~Done~~")

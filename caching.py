@@ -1,5 +1,9 @@
 import requests
 import json
+import redis
+
+#dictDb = redis.from_url(os.environ['REDIS_URL'], db= 2)
+dictDb = redis.from_url('redis://h:p3116b29cf75492a50fe130ffeb19d111fe87d4b0daea9440e235fec5a5f14300@ec2-34-224-49-43.compute-1.amazonaws.com:45779', db= 2)
 
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher Jordan Dining Hall", "North Quad", "South Quad", "Twigs At Oxford"]
 
@@ -112,7 +116,8 @@ def cacheDiningHall(responseContent, index , diningHallMenuDict):
 	print("DONE CACHING..")
 #.rstrip("\n")
 
-def pullMenus(diningHallMenuDict, diningHallList):
+def pullMenus():
+	diningHallMenuDict = {}
 	print("Working")
 	for entry in range(0,7):
 		print("--" + diningHallList[entry] + "--") #send with just name here
@@ -135,6 +140,6 @@ def pullMenus(diningHallMenuDict, diningHallList):
 			print("new message..")
 			print(diningHallMenuDict[entry][i])
 			print("end of message..")
-			
-	return diningHallMenuDict
+
+	dictDb.hmset("diningHallMenuDict", diningHallMenuDict)
 
