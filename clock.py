@@ -1,6 +1,7 @@
 import pytz
 import os
 import time
+import redis
 
 from apscheduler.schedulers.blocking import BlockingScheduler
 from flask import Flask, request
@@ -42,13 +43,13 @@ scheduler = BlockingScheduler()
 
 print("Job 1 Added..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', hour=19, minute=12, second=10, timezone=pytz.timezone('US/Eastern'))
+@scheduler.scheduled_job('cron', hour=19, minute=18, second=10, timezone=pytz.timezone('US/Eastern'))
 def spinCacheWorker():
 	result = q.enqueue(pullMenus)
 
 print("Job 2 added..")
 #scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', hour=19, minute=12, second=45, timezone=pytz.timezone('US/Eastern'))
+@scheduler.scheduled_job('cron', hour=19, minute=18, second=45, timezone=pytz.timezone('US/Eastern'))
 def spinSendWorker():
 	result = q.enqueue(sendToSubscribers, db.hgetall("diningHallMenuDict"))
 
