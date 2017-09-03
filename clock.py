@@ -2,7 +2,7 @@ import pytz
 import os
 import time
 
-from apscheduler.scheduler import Scheduler
+from apscheduler.schedulers.blocking import BlockingScheduler
 from flask import Flask, request
 from rq import Queue
 from worker import conn
@@ -39,23 +39,23 @@ sendToSubscribers(diningHallMenuDict)
 
 
 '''____Schedulers____'''
-scheduler = BackgroundScheduler()
+scheduler = BlockingScheduler()
 
-scheduler.start()
-print("Scheduler started")
 
 print("Job 1 Added..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-@scheduler.cron_schedule(hour=18, minute=20, second=10, timezone=pytz.timezone('US/Eastern'))
+@scheduler.scheduled_job('cron', hour=18, minute=29, second=10, timezone=pytz.timezone('US/Eastern'))
 def spinCacheWorker():
 	diningHallMenuDict = q.enqueue(pullMenus, diningHallMenuDict, diningHallList)
 	
 print("Job 2 added..")
 #scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-@scheduler.cron_schedule(hour=18, minute=20, second=45, timezone=pytz.timezone('US/Eastern'))
+@scheduler.scheduled_job('cron', hour=18, minute=29, second=45, timezone=pytz.timezone('US/Eastern'))
 def spinSendWorker():
 	q.enqueue(sendToSubscribers, diningHallMenuDict)
 
+scheduler.start()
+print("Scheduler started")
 print("~~Done~~")
 
 
