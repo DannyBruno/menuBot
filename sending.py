@@ -39,6 +39,7 @@ def decipherChoice(value):
 def sendToSubscribers(diningHallMenuDict):
 	print("Sending to subscribers!!")
 	n = 0
+	print("Dininghallmenudict: %s" % diningHallMenuDict)
 
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
