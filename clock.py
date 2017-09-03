@@ -46,13 +46,13 @@ print("Scheduler started")
 
 print("Job 1 Added..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-@scheduler.cron_schedule(hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
+@scheduler.cron_schedule(hour=18, minute=20, second=10, timezone=pytz.timezone('US/Eastern'))
 def spinCacheWorker():
 	diningHallMenuDict = q.enqueue(pullMenus, diningHallMenuDict, diningHallList)
 	
 print("Job 2 added..")
 #scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-@scheduler.cron_schedule(hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
+@scheduler.cron_schedule(hour=18, minute=20, second=45, timezone=pytz.timezone('US/Eastern'))
 def spinSendWorker():
 	q.enqueue(sendToSubscribers, diningHallMenuDict)
 
