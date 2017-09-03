@@ -2,10 +2,13 @@ import pytz
 import os
 import time
 
-from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.scheduler import Scheduler
 from flask import Flask, request
+from rq import Queue
+from worker import conn
 from sending import sendToSubscribers
 from caching import pullMenus
+
 
 
 
@@ -13,6 +16,8 @@ diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "No
 
 
 diningHallMenuDict = {}
+
+q = Queue(connection=conn)
 
 
 
@@ -36,12 +41,23 @@ sendToSubscribers(diningHallMenuDict)
 '''____Schedulers____'''
 scheduler = BackgroundScheduler()
 
-print("1")
-scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-	
-print("2")
-scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-
-print("3")
 scheduler.start()
 print("Scheduler started")
+
+print("Job 1 Added..")
+#scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
+@scheduler.cron_schedule(hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
+def spinCacheWorker():
+	diningHallMenuDict = q.enqueue(pullMenus, diningHallMenuDict, diningHallList)
+	
+print("Job 2 added..")
+#scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
+@scheduler.cron_schedule(hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
+def spinSendWorker():
+	q.enqueue(sendToSubscribers, diningHallMenuDict)
+
+print("~~Done~~")
+
+
+
+

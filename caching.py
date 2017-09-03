@@ -135,4 +135,6 @@ def pullMenus(diningHallMenuDict, diningHallList):
 			print("new message..")
 			print(diningHallMenuDict[entry][i])
 			print("end of message..")
+			
+	return diningHallMenuDict
 

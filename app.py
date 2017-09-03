@@ -268,6 +268,7 @@ tz = pytz.timezone('US/Eastern')
 easternNow = datetime.now(tz)
 print(easternNow)
 print("Time..")
+print("first file is complete..")
 
 #populates with info
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
@@ -299,4 +300,4 @@ def hello_world():
 
 
 if __name__ == '__main__':
-	app.run(port="6000", use_reloader=False)
+	app.run(port=6000, use_reloader=False)
