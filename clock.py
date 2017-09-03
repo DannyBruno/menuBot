@@ -44,14 +44,14 @@ scheduler = BlockingScheduler()
 
 print("Job 1 Added..")
 #scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=20, minute=26, second=10, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', hour=18, minute=29, second=10, timezone=pytz.timezone('US/Eastern'))
-def spinCacheWorker():
+@scheduler.scheduled_job('cron', hour=18, minute=35, second=10, timezone=pytz.timezone('US/Eastern'))
+def spinCacheWorker(diningHallMenuDict, diningHallList):
 	diningHallMenuDict = q.enqueue(pullMenus, diningHallMenuDict, diningHallList)
 	
 print("Job 2 added..")
 #scheduler.add_job(sendToSubscribers, 'cron', [diningHallMenuDict], hour=20, minute=26, second=45, timezone=pytz.timezone('US/Eastern'))
-@scheduler.scheduled_job('cron', hour=18, minute=29, second=45, timezone=pytz.timezone('US/Eastern'))
-def spinSendWorker():
+@scheduler.scheduled_job('cron', hour=18, minute=35, second=45, timezone=pytz.timezone('US/Eastern'))
+def spinSendWorker(diningHallMenuDict):
 	q.enqueue(sendToSubscribers, diningHallMenuDict)
 
 scheduler.start()
