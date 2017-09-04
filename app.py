@@ -182,10 +182,8 @@ def decipherChoice(value):
 		#print(value)
 	return myList
 
-#for 1, 3, 4, 5, 6
-#east quad just needs the %20, mosher%20jordan, north%20quad, south%20quad, location=twigs%20at%20oxford%20&output=json&date=today
+
 diningHallList = ["Bursley", "East Quad", "Markley", "Mosher-Jordan (Mojo)", "North Quad", "South Quad", "Twigs (Oxford)"]
-#strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 #message logic
 @app.route('/webhook', methods=['POST'])
@@ -263,35 +261,7 @@ def webhook():
 
 
 
-print("Time..")
-tz = pytz.timezone('US/Eastern')
-easternNow = datetime.now(tz)
-print(easternNow)
-print("Time..")
-print("first file is complete..")
-
-#populates with info
-#scheduler.add_job(pullMenus, 'cron', [diningHallMenuDict, diningHallList], hour=3, minute=21, second=10, timezone=pytz.timezone('US/Eastern'))
-
-
-#scheduler.add_job(sendToSubscribers, 'cron', hour=3, minute=21, second=45, timezone=pytz.timezone('US/Eastern'))
-
-
-#print(diningHallMenuDict)
-#scheduler.start()
-
-'''______GOOD TESTING______'''
-#db.set('1458256307549428', 3456)
-
-#pullMenus(diningHallMenuDict, diningHallList)
-
-#time.sleep(5)
-
-#sendToSubscribers()
-
-
-
-#frontend
+#TODO: frontend
 @app.route('/')
 def hello_world():
     return 'Hello, World!'
