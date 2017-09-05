@@ -39,13 +39,12 @@ def decipherChoice(value):
 def sendToSubscribers(diningHallMenuDict):
 	print("Sending to subscribers!!")
 	n = 0
-	print("Dininghallmenudict: %s" % diningHallMenuDict)
+	#print("Dininghallmenudict: %s" % diningHallMenuDict)
 
 	for key in db.keys():
 		#print("size of keys %s" % len(db.keys()))
 		#print(db.get(key.decode('utf-8')))
 		print("key %s: %s" % (n, key.decode('utf-8')))
-		print(key.decode('utf-8') == 'diningHallMenuDict')
 		if key.decode('utf-8') != 'diningHallMenuDict' and db.get(key.decode('utf-8')) > 0:
 			print("key %s: %s" % (n, key.decode('utf-8')))
 			n = n + 1
